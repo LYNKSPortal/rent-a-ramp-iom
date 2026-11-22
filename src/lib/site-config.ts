@@ -90,7 +90,7 @@ export const SITE = {
 
 export const CONTACT = {
   whatsapp: "+44 76 2433 2271",
-  email: "tomasz@tdcar.im",
+  email: "bookings@rentaramp.im",
   addressLines: ["Unit 2, Peel Road Industrial Estate", "Douglas", "Isle of Man", "IM1 5EP"],
   mapQuery: "Peel Road Industrial Estate, Douglas, Isle of Man",
   // Replace with a real embed URL / Google Maps place link when available.

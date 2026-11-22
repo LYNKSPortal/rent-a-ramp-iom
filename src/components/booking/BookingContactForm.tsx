@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { CONTACT, Ramp } from "@/lib/site-config";
 import { DurationId } from "@/lib/booking";
@@ -20,7 +20,7 @@ export default function BookingContactForm({
   hour,
   durationId,
 }: Props) {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -30,28 +30,8 @@ export default function BookingContactForm({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const requestId = useRef("");
+  const submissionId = useRef("");
   const pending = useRef(false);
-
-  if (submitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="border-2 border-orange bg-orange/5 p-6"
-      >
-        <h3 className="font-display text-xl font-semibold uppercase tracking-tight text-ink">
-          Booking request sent
-        </h3>
-        <p className="mt-2 text-sm leading-relaxed text-grey-600">
-          Your request has been emailed to our team at{" "}
-          <a href={`mailto:${CONTACT.email}`} className="font-medium text-orange">
-            {CONTACT.email}
-          </a>. An acknowledgement has also been sent to your email address.
-          Your slot is not reserved until Tomasz confirms availability by email.
-        </p>
-      </motion.div>
-    );
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,16 +39,25 @@ export default function BookingContactForm({
     pending.current = true;
     setSending(true);
     setError("");
-    requestId.current ||= crypto.randomUUID();
     try {
+      const details = { rampId: ramp.id, date, hour, durationId, name: name.trim(), email: email.trim(), phone: phone.trim(), notes: notes.trim(), website };
+      const fingerprint = JSON.stringify(details);
+      if (requestId.current !== fingerprint) {
+        requestId.current = fingerprint;
+        submissionId.current = crypto.randomUUID();
+      }
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rampId: ramp.id, date, hour, durationId, name, email, phone, notes, website, requestId: requestId.current }),
+        body: JSON.stringify({ ...details, requestId: submissionId.current }),
       });
-      const result = await response.json();
-      if (!response.ok || !result.success) throw new Error(result.error || "Unable to send your request.");
-      setSubmitted(true);
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error
+          ? `${result.error}${result.code ? ` (Reference: ${result.code})` : ""}`
+          : "The booking service could not be reached. Please try again shortly.");
+      }
+      router.replace("/booking/thank-you");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unable to send your request. Please try again.");
     } finally {

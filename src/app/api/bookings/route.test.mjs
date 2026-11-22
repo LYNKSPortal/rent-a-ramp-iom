@@ -8,7 +8,7 @@ import ts from "typescript";
 const require = createRequire(import.meta.url);
 const root = new URL("../../../", import.meta.url);
 
-function loadRoute(send, env = { RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "Rent a Ramp <noreply@rentaramp.im>" }) {
+function loadRoute(send, env = { RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "Rent a Ramp <bookings@rentaramp.im>" }) {
   const cache = new Map();
   function load(file) {
     if (cache.has(file.href)) return cache.get(file.href);
@@ -46,13 +46,15 @@ test("sends separate owner and customer emails with correct sender, reply-to and
   });
   assert.equal((await post(request({ ...input, price: 0, to: "attacker@example.test" }))).status, 200);
   assert.equal(payload.length, 2);
-  assert.deepEqual(payload[0].to, ["tomasz@tdcar.im"]);
+  assert.deepEqual(payload[0].to, ["bookings@rentaramp.im"]);
   assert.equal(payload[0].reply_to, input.email);
   assert.match(payload[0].text, /£25/);
   assert.deepEqual(payload[1].to, [input.email]);
-  assert.equal(payload[1].reply_to, "tomasz@tdcar.im");
+  assert.equal(payload[1].reply_to, "bookings@rentaramp.im");
   assert.match(payload[1].text, /NOT reserved/);
-  for (const message of payload) assert.equal(message.from, "Rent a Ramp <noreply@rentaramp.im>");
+  assert.match(payload[1].text, /within 24 hours/);
+  assert.match(payload[1].text, /does not confirm your booking/);
+  for (const message of payload) assert.equal(message.from, "Rent a Ramp <bookings@rentaramp.im>");
 });
 
 test("rejects bad input, closed days, out-of-hours slots, spam and foreign origins without emailing", async () => {
@@ -63,9 +65,15 @@ test("rejects bad input, closed days, out-of-hours slots, spam and foreign origi
   assert.equal((await post(request(input, "https://other.example"))).status, 403);
 });
 
-test("provider failures and missing credentials never report success", async () => {
-  assert.equal((await loadRoute(async () => Response.json({ error: "failure" }, { status: 403 }))(request(input))).status, 502);
-  assert.equal((await loadRoute(() => assert.fail("Must not call provider"), {})(request(input))).status, 503);
+test("provider failures and missing credentials return diagnostic references without exposing secrets", async () => {
+  const rejected = await loadRoute(async () => Response.json({ name: "validation_error", message: "private provider detail" }, { status: 403 }))(request(input));
+  assert.equal(rejected.status, 502);
+  const rejection = await rejected.json();
+  assert.equal(rejection.code, "EMAIL_PROVIDER_403");
+  assert.doesNotMatch(JSON.stringify(rejection), /private provider detail|test-only/);
+  const missing = await loadRoute(() => assert.fail("Must not call provider"), {})(request(input));
+  assert.equal(missing.status, 503);
+  assert.equal((await missing.json()).code, "EMAIL_CONFIG");
 });
 
 test("incomplete batch responses never report success", async () => {

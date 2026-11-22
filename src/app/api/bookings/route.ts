@@ -7,7 +7,7 @@ import { formatGBP } from "@/lib/utils";
 export const runtime = "nodejs";
 
 const attempts = new Map<string, { count: number; expires: number }>();
-const fail = (error: string, status = 400) => Response.json({ error }, { status });
+const fail = (error: string, status = 400, code?: string) => Response.json({ error, ...(code && { code }) }, { status });
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
@@ -58,7 +58,10 @@ export async function POST(request: Request) {
   }
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) return fail("Email booking is temporarily unavailable. Please contact us by email or WhatsApp.", 503);
+  if (!apiKey || !from) {
+    console.error("Booking email configuration missing", { apiKeyConfigured: Boolean(apiKey), senderConfigured: Boolean(from) });
+    return fail("Email booking is temporarily unavailable. Please contact us by email or WhatsApp.", 503, "EMAIL_CONFIG");
+  }
   const text = [
     "New booking request — confirmation required",
     `Ramp: ${ramp.name}`,
@@ -86,7 +89,8 @@ export async function POST(request: Request) {
           text: [
             `Hi ${name.trim()},`,
             "",
-            "Thank you for your booking request. Tomasz will check availability and get back to you.",
+            "Thank you for your submission. A member of our team will check availability and be in touch within 24 hours.",
+            "This email confirms that your request has gone through; it does not confirm your booking. Please wait for a member of our team to confirm availability before coming to the workshop.",
             "This is an acknowledgement only. Your ramp is NOT reserved until Tomasz confirms your booking. No payment has been taken.",
             "",
             text.replace("New booking request — confirmation required", "Your requested booking details"),
@@ -98,7 +102,12 @@ export async function POST(request: Request) {
       ]),
       signal: AbortSignal.timeout(15_000),
     });
-    if (!response.ok) return fail("Your request could not be emailed. Please try again or contact us directly.", 502);
+    if (!response.ok) {
+      const providerError = await response.json().catch(() => null);
+      const providerCode = typeof providerError?.name === "string" && /^[a-z_]+$/.test(providerError.name) ? providerError.name : "unknown";
+      console.error("Resend rejected booking emails", { status: response.status, code: providerCode, requestId });
+      return fail("Your request could not be emailed. Please try again or contact us directly.", 502, `EMAIL_PROVIDER_${response.status}`);
+    }
     const result = await response.json();
     if (!Array.isArray(result.data) || result.data.length !== 2 || result.data.some((item: { id?: string }) => !item.id)) {
       return fail("Email submission could not be confirmed. Please contact us directly.", 502);
