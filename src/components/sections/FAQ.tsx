@@ -8,8 +8,8 @@ export default function FAQ() {
       <Container className="lg:grid lg:grid-cols-[1fr_1.4fr] lg:gap-16">
         <SectionHeading eyebrow="FAQs" title="Good to know" description="Can't find your answer? Get in touch and we'll help directly." />
         <div className="mt-10 divide-y divide-grey-200 lg:mt-0">
-          {FAQS.map((faq) => (
-            <details key={faq.question} className="group">
+          {FAQS.map((faq, i) => (
+            <details key={faq.question} data-reveal data-reveal-delay={i * 60} className="group">
               <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-5 font-display text-base font-semibold uppercase text-ink sm:text-lg [&::-webkit-details-marker]:hidden">
                 {faq.question}
                 <span aria-hidden="true" className="shrink-0 text-2xl text-orange group-open:rotate-45">+</span>

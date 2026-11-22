@@ -14,7 +14,7 @@ export default function Contact() {
             description="Based on the Peel Road Industrial Estate — easy to reach from anywhere on the island."
           />
 
-          <dl className="mt-8 space-y-6">
+          <dl data-reveal data-reveal-delay="80" className="mt-8 space-y-6">
             <div>
               <dt className="text-xs font-semibold uppercase tracking-widest text-grey-600">
                 Address
@@ -62,7 +62,7 @@ export default function Contact() {
             </div>
           </dl>
 
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+          <div data-reveal data-reveal-delay="160" className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Button href="/booking" size="lg">
               Book a Ramp
             </Button>
@@ -79,6 +79,8 @@ export default function Contact() {
         </div>
 
         <iframe
+          data-reveal
+          data-reveal-delay="120"
           title="Rent a Ramp location — Unit 2, Peel Road Industrial Estate, Douglas"
           src={`https://maps.google.com/maps?q=${encodeURIComponent(CONTACT.addressLines.join(", "))}&output=embed`}
           className="aspect-[4/5] w-full border-0 lg:aspect-square"

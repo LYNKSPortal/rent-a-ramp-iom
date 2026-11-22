@@ -16,6 +16,8 @@ export default function HowItWorks() {
           {HOW_IT_WORKS.map((item, i) => (
             <div
               key={item.step}
+              data-reveal
+              data-reveal-delay={i * 90}
               className="relative"
             >
               <span className="font-display text-6xl font-semibold text-grey-600">

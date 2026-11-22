@@ -113,9 +113,6 @@ export default function Navbar() {
         </Container>
       </div>
 
-      <div className="border-t border-white/20 bg-ink px-5 py-2 lg:hidden">
-        <Button href="/booking" className="min-h-11 w-full" onClick={() => setMenuOpen(false)}><CalendarDays className="h-5 w-5 shrink-0" aria-hidden="true" />Book a Ramp</Button>
-      </div>
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </header>
   );

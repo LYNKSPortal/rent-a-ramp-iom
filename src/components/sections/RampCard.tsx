@@ -3,9 +3,11 @@ import Button from "@/components/ui/Button";
 import { Ramp } from "@/lib/site-config";
 import { formatGBP } from "@/lib/utils";
 
-export default function RampCard({ ramp }: { ramp: Ramp; index: number }) {
+export default function RampCard({ ramp, index }: { ramp: Ramp; index: number }) {
   return (
     <article
+      data-reveal
+      data-reveal-delay={index * 100}
       className="flex flex-col border border-grey-200 bg-white"
     >
       <RampImage ramp={ramp} className="aspect-square w-full border-b border-grey-200" />

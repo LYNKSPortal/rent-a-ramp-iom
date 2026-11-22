@@ -23,7 +23,7 @@ export default function Pricing() {
         />
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-          <div className="min-w-0">
+          <div data-reveal className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/50">
               Ramp Hire
             </p>
@@ -67,7 +67,7 @@ export default function Pricing() {
             </div>
           </div>
 
-          <div className="min-w-0">
+          <div data-reveal data-reveal-delay="120" className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/50">
               Add-On Services
             </p>
@@ -87,7 +87,7 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div data-reveal data-reveal-delay="160" className="mt-10 flex flex-col gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-sm leading-relaxed text-white/70">
             {LONGER_BOOKING_NOTE}
           </p>

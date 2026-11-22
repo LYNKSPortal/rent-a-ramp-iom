@@ -15,9 +15,11 @@ export default function Tools() {
           />
 
           <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {TOOLS_EQUIPMENT.items.map((item) => (
+            {TOOLS_EQUIPMENT.items.map((item, i) => (
               <li
                 key={item}
+                data-reveal
+                data-reveal-delay={i * 40}
                 className="flex items-start gap-3 border border-grey-200 px-4 py-3 text-sm font-medium text-ink-700"
               >
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 bg-orange" aria-hidden />
@@ -27,7 +29,7 @@ export default function Tools() {
           </ul>
         </div>
 
-        <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-square">
+        <div data-reveal data-reveal-delay="150" className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-square">
           <Image
             src="/images/hero-cover-img.fa5e884b9c.webp"
             alt="Vehicle lifts inside the Rent a Ramp self-service workshop in Douglas"

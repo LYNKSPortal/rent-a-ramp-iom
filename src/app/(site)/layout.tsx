@@ -1,6 +1,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ConversionAnalytics from "@/components/layout/ConversionAnalytics";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <Footer />
+      <ScrollReveal />
       {process.env.VERCEL_ANALYTICS_ENABLED === "true" && <ConversionAnalytics />}
     </div>
   );

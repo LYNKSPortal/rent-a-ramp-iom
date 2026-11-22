@@ -13,9 +13,11 @@ export default function WhyRentARamp() {
         />
 
         <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {WHY_RENT_A_RAMP.map((item) => (
+          {WHY_RENT_A_RAMP.map((item, i) => (
             <div
               key={item.title}
+              data-reveal
+              data-reveal-delay={i * 80}
               className="border-t-2 border-orange bg-white p-6"
             >
               <h3 className="font-display text-lg font-semibold uppercase tracking-tight text-ink">

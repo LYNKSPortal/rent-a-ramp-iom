@@ -11,7 +11,7 @@ export default function CTABand({
   return (
     <section className="bg-orange py-14 lg:py-16">
       <Container className="flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
-        <div>
+        <div data-reveal>
           <h2 className="font-display text-2xl font-semibold uppercase tracking-tight text-white sm:text-3xl">
             {title}
           </h2>
@@ -19,9 +19,11 @@ export default function CTABand({
             {description}
           </p>
         </div>
-        <Button href="/booking" size="lg" variant="secondary" className="shrink-0">
-          Book a Ramp
-        </Button>
+        <div data-reveal data-reveal-delay="120" className="shrink-0">
+          <Button href="/booking" size="lg" variant="secondary">
+            Book a Ramp
+          </Button>
+        </div>
       </Container>
     </section>
   );
