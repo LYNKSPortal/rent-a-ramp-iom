@@ -45,7 +45,8 @@ export default function DateTimeSelector({
 
       {date && openable && (
         <div>
-          <p className="mb-2 text-sm font-semibold text-ink">Available times</p>
+          <p className="mb-2 text-sm font-semibold text-ink">Request a start time</p>
+          <p className="mb-3 text-sm text-grey-600">All times within opening hours can be requested. Tomasz will confirm availability and resolve any booking clashes.</p>
           {slots.length === 0 ? (
             <p className="text-sm text-grey-600">
               No slots long enough for this duration on that day — try a shorter duration or another date.

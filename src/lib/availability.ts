@@ -13,25 +13,8 @@ export function formatHour(hour: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-/** Deterministic pseudo-random hash so mock availability is stable per render. */
-function hash(str: string): number {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = (h << 5) - h + str.charCodeAt(i);
-    h |= 0;
-  }
-  return Math.abs(h);
-}
-
-/**
- * Generates bookable time slots for a given ramp/date combination.
- * This is a front-end placeholder: it derives opening hours from
- * BOOKING_HOURS in site-config and marks a handful of slots as
- * unavailable using a deterministic hash, simulating existing bookings.
- * Replace with a real availability API when one exists.
- */
 export function getTimeSlotsForDate(dateStr: string, rampId: string, durationHours: number): TimeSlot[] {
-  if (!dateStr) return [];
+  if (!dateStr || !rampId || !Number.isFinite(durationHours) || durationHours <= 0) return [];
   const date = new Date(`${dateStr}T00:00:00`);
   const day = date.getDay();
   const hoursForDay = BOOKING_HOURS.dayHours[day];
@@ -41,12 +24,10 @@ export function getTimeSlotsForDate(dateStr: string, rampId: string, durationHou
   const slots: TimeSlot[] = [];
 
   for (let hour = open; hour + durationHours <= close; hour += BOOKING_HOURS.slotLengthHours) {
-    const key = `${rampId}-${dateStr}-${hour}`;
-    const isUnavailable = hash(key) % 5 === 0; // ~20% deterministically "booked"
     slots.push({
       time: formatHour(hour),
       hour,
-      available: !isUnavailable,
+      available: true,
     });
   }
 

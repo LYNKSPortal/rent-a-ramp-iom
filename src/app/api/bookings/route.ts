@@ -3,6 +3,7 @@ import { BOOKING_DURATIONS, BOOKING_HOURS, CONTACT, RAMPS, SITE } from "@/lib/si
 import { computePrice } from "@/lib/booking";
 import { formatHour } from "@/lib/availability";
 import { formatGBP } from "@/lib/utils";
+import { renderBookingEmail } from "@/lib/booking-email";
 
 export const runtime = "nodejs";
 
@@ -75,17 +76,23 @@ export async function POST(request: Request) {
     `Phone: ${phone}`,
     `Notes: ${notes.trim() || "None"}`,
   ].join("\n");
+  const emailDetails = {
+    name: name.trim(), email, phone, notes: notes.trim(), ramp: ramp.name,
+    date: selectedDate.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Isle_of_Man" }),
+    time: formatHour(hour), duration: duration.label, price: formatGBP(computePrice(ramp, duration.id)),
+  };
   try {
     const response = await fetch("https://api.resend.com/emails/batch", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "Idempotency-Key": `booking-${requestId}` },
       body: JSON.stringify([
-        { from, to: [CONTACT.email], reply_to: email, subject: `Booking request: ${ramp.name} — ${date} at ${formatHour(hour)}`, text },
+        { from, to: [CONTACT.email], reply_to: email, subject: `Booking request: ${ramp.name} — ${date} at ${formatHour(hour)}`, text, html: renderBookingEmail(emailDetails, "owner") },
         {
           from,
           to: [email],
           reply_to: CONTACT.email,
           subject: "We received your Rent a Ramp booking request — awaiting confirmation",
+          html: renderBookingEmail(emailDetails, "customer"),
           text: [
             `Hi ${name.trim()},`,
             "",
@@ -95,7 +102,7 @@ export async function POST(request: Request) {
             "",
             text.replace("New booking request — confirmation required", "Your requested booking details"),
             "",
-            `For changes or questions, reply to this email to contact Tomasz at ${CONTACT.email}.`,
+            `If you have any issues in the meantime, please get in touch with Tomasz by email at ${CONTACT.email} or on WhatsApp at ${CONTACT.whatsapp}: https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}.`,
             "Rent a Ramp",
           ].join("\n"),
         },

@@ -102,7 +102,7 @@ export const CONTACT = {
 };
 
 export const OPENING_HOURS: OpeningHoursRow[] = [
-  { label: "Monday – Friday", hours: "9:15am – 5:15pm" },
+  { label: "Monday – Friday", hours: "9:00am – 5:00pm" },
   { label: "Saturday", hours: "10:00am – 4:00pm" },
   { label: "Sunday", hours: "Closed" },
 ];
@@ -119,11 +119,11 @@ export const BOOKING_HOURS: {
   slotLengthHours: 1,
   dayHours: {
     0: null, // Sunday — closed
-    1: { open: 9.25, close: 17.25 }, // Monday, 9:15am – 5:15pm
-    2: { open: 9.25, close: 17.25 },
-    3: { open: 9.25, close: 17.25 },
-    4: { open: 9.25, close: 17.25 },
-    5: { open: 9.25, close: 17.25 }, // Friday
+    1: { open: 9, close: 17 }, // Monday, 9:00am – 5:00pm
+    2: { open: 9, close: 17 },
+    3: { open: 9, close: 17 },
+    4: { open: 9, close: 17 },
+    5: { open: 9, close: 17 }, // Friday
     6: { open: 10, close: 16 }, // Saturday, 10:00am – 4:00pm
   },
 };

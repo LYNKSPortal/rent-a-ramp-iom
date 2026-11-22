@@ -8,7 +8,7 @@ import ts from "typescript";
 const require = createRequire(import.meta.url);
 const root = new URL("../../../", import.meta.url);
 
-function loadRoute(send, env = { RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "Rent a Ramp <bookings@rentaramp.im>" }) {
+function loadModule(send, env = { RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "Rent a Ramp <bookings@rentaramp.im>" }, entry = "app/api/bookings/route.ts") {
   const cache = new Map();
   function load(file) {
     if (cache.has(file.href)) return cache.get(file.href);
@@ -24,16 +24,51 @@ function loadRoute(send, env = { RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL:
     }, { filename: file.pathname });
     return loaded.exports;
   }
-  return load(new URL("app/api/bookings/route.ts", root)).POST;
+  return load(new URL(entry, root));
+}
+
+function loadRoute(send, env) {
+  return loadModule(send, env).POST;
 }
 
 const input = {
-  rampId: "2post-a", durationId: "1h", date: "2099-01-05", hour: 9.25,
+  rampId: "2post-a", durationId: "1h", date: "2099-01-05", hour: 9,
   name: "Test Customer", email: "customer@example.test", phone: "+447624332271",
   notes: "TEST ONLY", requestId: "12345678-1234-1234-1234-123456789abc",
 };
 const request = (body, origin = "https://www.rentaramp.im") => new Request("https://www.rentaramp.im/api/bookings", {
   method: "POST", headers: { "Content-Type": "application/json", origin }, body: JSON.stringify(body),
+});
+
+test("every fitting slot is selectable for every ramp, with no simulated bookings", () => {
+  const { getTimeSlotsForDate } = loadModule(undefined, {}, "lib/availability.ts");
+  const { RAMPS, BOOKING_DURATIONS } = loadModule(undefined, {}, "lib/site-config.ts");
+  for (const ramp of RAMPS) {
+    for (const duration of BOOKING_DURATIONS) {
+      for (let day = 5; day <= 9; day++) {
+        const slots = getTimeSlotsForDate(`2099-01-0${day}`, ramp.id, duration.hours);
+        assert.equal(slots.length, 9 - duration.hours);
+        assert.equal(slots[0].hour, 9);
+        assert.equal(slots.at(-1).hour + duration.hours, 17);
+        assert.ok(slots.every((slot) => slot.available));
+      }
+      const saturday = getTimeSlotsForDate("2099-01-10", ramp.id, duration.hours);
+      assert.equal(saturday.length, Math.max(0, 7 - duration.hours));
+      assert.ok(saturday.every((slot) => slot.available && slot.hour >= 10 && slot.hour + duration.hours <= 16));
+      assert.equal(getTimeSlotsForDate("2099-01-11", ramp.id, duration.hours).length, 0);
+    }
+  }
+});
+
+test("API accepts opening and closing boundaries and repeat requests without checking clashes", async () => {
+  const post = loadRoute(async () => Response.json({ data: [{ id: "owner" }, { id: "customer" }] }));
+  for (const selection of [
+    { hour: 9, durationId: "full" },
+    { hour: 16, durationId: "1h" },
+    { hour: 16, durationId: "1h" },
+    { date: "2099-01-10", hour: 10, durationId: "half" },
+    { date: "2099-01-10", hour: 15, durationId: "1h" },
+  ]) assert.equal((await post(request({ ...input, ...selection }))).status, 200);
 });
 
 test("sends separate owner and customer emails with correct sender, reply-to and server-calculated pricing", async () => {
@@ -54,7 +89,33 @@ test("sends separate owner and customer emails with correct sender, reply-to and
   assert.match(payload[1].text, /NOT reserved/);
   assert.match(payload[1].text, /within 24 hours/);
   assert.match(payload[1].text, /does not confirm your booking/);
-  for (const message of payload) assert.equal(message.from, "Rent a Ramp <bookings@rentaramp.im>");
+  for (const message of payload) {
+    assert.equal(message.from, "Rent a Ramp <bookings@rentaramp.im>");
+    assert.match(message.html, /bgcolor="#f7f7f7"/);
+    assert.match(message.html, /https:\/\/www\.rentaramp\.im\/logo-dark\.png/);
+    assert.match(message.html, /width="300"/);
+    assert.match(message.html, /#e10205/);
+    assert.match(message.html, /£25/);
+    assert.ok(message.text);
+  }
+  assert.match(payload[1].html, /Your booking is not yet confirmed/);
+  assert.match(payload[1].html, /24 hours/);
+  assert.match(payload[0].html, /Reply to customer/);
+});
+
+test("escapes customer content in both HTML email templates", async () => {
+  let messages;
+  const post = loadRoute(async (_url, options) => {
+    messages = JSON.parse(options.body);
+    return Response.json({ data: [{ id: "owner-email" }, { id: "customer-email" }] });
+  });
+  assert.equal((await post(request({ ...input, name: '<img src=x onerror="alert(1)">', notes: "<script>test</script>\nSecond line & more" }))).status, 200);
+  for (const message of messages) {
+    assert.doesNotMatch(message.html, /<script>|<img src=x/);
+    assert.match(message.html, /&lt;script&gt;/);
+    assert.match(message.html, /&lt;img/);
+    assert.match(message.html, /<br>Second line &amp; more/);
+  }
 });
 
 test("rejects bad input, closed days, out-of-hours slots, spam and foreign origins without emailing", async () => {
