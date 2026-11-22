@@ -90,7 +90,7 @@ export const SITE = {
 
 export const CONTACT = {
   whatsapp: "+44 76 2433 2271",
-  email: "bookings@rentaramp.im",
+  email: "tomasz@tdcar.im",
   addressLines: ["Unit 2, Peel Road Industrial Estate", "Douglas", "Isle of Man", "IM1 5EP"],
   mapQuery: "Peel Road Industrial Estate, Douglas, Isle of Man",
   // Replace with a real embed URL / Google Maps place link when available.
@@ -274,7 +274,7 @@ export const FAQS: FAQItem[] = [
   },
   {
     question: "How do I request a ramp booking?",
-    answer: "Choose a ramp, duration, date and time on our booking page, then enter your contact details. The form opens a pre-filled email for you to send. Your booking is only confirmed once we reply; the website does not show live availability or take payment.",
+    answer: "Choose a ramp, duration, date and time on our booking page, then enter your contact details and submit your request. Your request is emailed directly to our team. Your booking is only confirmed once we reply; the website does not show live availability or take payment.",
   },
   {
     question: "What are your opening hours?",

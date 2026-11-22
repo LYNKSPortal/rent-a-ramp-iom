@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/booking" },
   openGraph: {
     title: "Request Ramp Hire in Douglas | Rent a Ramp",
-    description: "Choose a vehicle lift, date and duration, then send your booking request by email. All bookings require confirmation.",
+    description: "Choose a vehicle lift, date and duration, then submit your booking request directly to our team. All bookings require confirmation.",
     url: "/booking",
     images: ["/hero-cover-img.jpg"],
   },

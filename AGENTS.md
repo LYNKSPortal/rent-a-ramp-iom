@@ -11,6 +11,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Project notes (Rent a Ramp)
 
 - **Site content/pricing/hours/contact**: edit `src/lib/site-config.ts` — no component changes needed.
-- **Booking requests**: `/booking` opens a pre-filled email to `CONTACT.email`; customers must send it from their email app. No database, admin dashboard, or booking API is used.
+- **Booking requests**: `/booking` posts to `/api/bookings`, which validates the request and sends it to `CONTACT.email` using Resend. No database or admin dashboard is used.
+- Set server-only `RESEND_API_KEY` and `RESEND_FROM_EMAIL` locally in `.env.local` and in the deployment host. The sender domain must be verified in Resend. Never use a `NEXT_PUBLIC_` prefix for credentials.
+- The booking endpoint has a honeypot, origin checks, bounded process-local throttling and Resend idempotency. Configure host-level rate limiting before production; process-local throttling is not shared across serverless instances.
 - Marketing pages live under `src/app/(site)/` with the public Navbar/Footer layout.
 - Verification: `npm run lint`, `npx tsc --noEmit`, and `npm run build`.

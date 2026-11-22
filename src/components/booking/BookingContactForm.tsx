@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import { CONTACT, Ramp } from "@/lib/site-config";
-import { computePrice, DurationId } from "@/lib/booking";
-import { formatHour } from "@/lib/availability";
-import { formatGBP } from "@/lib/utils";
+import { DurationId } from "@/lib/booking";
 
 interface Props {
   ramp: Ramp;
@@ -21,7 +19,6 @@ export default function BookingContactForm({
   date,
   hour,
   durationId,
-  durationLabel,
 }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState("");
@@ -29,33 +26,11 @@ export default function BookingContactForm({
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
 
-  const price = computePrice(ramp, durationId);
-  const dateLabel = new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const timeLabel = formatHour(hour);
-
-  const mailtoHref = (() => {
-    const subject = `Booking request: ${ramp.name} on ${date} at ${timeLabel}`;
-    const body = [
-      `Ramp: ${ramp.name}`,
-      `Date: ${dateLabel}`,
-      `Time: ${timeLabel}`,
-      `Duration: ${durationLabel}`,
-      `Estimated price: ${formatGBP(price)}`,
-      "",
-      `Name: ${name}`,
-      `Phone: ${phone}`,
-      `Email: ${email}`,
-      notes ? `Notes: ${notes}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-    return `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  })();
+  const [website, setWebsite] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const requestId = useRef("");
+  const pending = useRef(false);
 
   if (submitted) {
     return (
@@ -65,24 +40,41 @@ export default function BookingContactForm({
         className="border-2 border-orange bg-orange/5 p-6"
       >
         <h3 className="font-display text-xl font-semibold uppercase tracking-tight text-ink">
-          Request ready to send
+          Booking request sent
         </h3>
         <p className="mt-2 text-sm leading-relaxed text-grey-600">
-          Your email app should have opened with your booking request pre-filled.
-          If it didn&rsquo;t, email us directly at{" "}
+          Your request has been emailed to our team at{" "}
           <a href={`mailto:${CONTACT.email}`} className="font-medium text-orange">
             {CONTACT.email}
-          </a>. We&rsquo;ll confirm your slot as soon as
-          possible.
+          </a>. An acknowledgement has also been sent to your email address.
+          Your slot is not reserved until Tomasz confirms availability by email.
         </p>
       </motion.div>
     );
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    window.location.href = mailtoHref;
-    setSubmitted(true);
+    if (pending.current) return;
+    pending.current = true;
+    setSending(true);
+    setError("");
+    requestId.current ||= crypto.randomUUID();
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rampId: ramp.id, date, hour, durationId, name, email, phone, notes, website, requestId: requestId.current }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || "Unable to send your request.");
+      setSubmitted(true);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to send your request. Please try again.");
+    } finally {
+      pending.current = false;
+      setSending(false);
+    }
   }
 
   return (
@@ -143,12 +135,17 @@ export default function BookingContactForm({
           className="w-full border-2 border-grey-200 px-4 py-2.5 text-sm focus:border-orange focus:outline-none"
         />
       </div>
-      <Button type="submit" size="lg" className="w-full">
-        Request This Booking
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input id="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+      </div>
+      {error && <p role="alert" className="text-sm text-orange-dark">{error} Email <a className="underline" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> if the problem continues.</p>}
+      <Button type="submit" size="lg" className="w-full" disabled={sending}>
+        {sending ? "Sending request…" : "Request This Booking"}
       </Button>
       <p className="text-xs text-grey-600">
-        This opens your email app with the booking details filled in — we&rsquo;ll
-        confirm availability with you directly.
+        Your details will be emailed to our team to handle your booking request.
+        We&rsquo;ll confirm availability with you directly. No payment is taken.
       </p>
     </form>
   );
