@@ -7,23 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test src/app/api/bookings/route.test.mjs"
+    "test": "node --test src/app/api/bookings/route.test.mjs",
+    "test:responsive": "node scripts/check-responsive.mjs",
+    "test:audit": "node scripts/audit.mjs",
+    "images:optimise": "node scripts/optimise-images.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "1.5.0",
     "clsx": "^2.1.1",
-    "framer-motion": "^13.4.2",
     "lucide-react": "^1.48.0",
-    "next": "16.3.6",
+    "next": "16.4.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.6",
+    "eslint-config-next": "16.4.6",
+    "lighthouse": "13.6.0",
+    "sharp": "0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

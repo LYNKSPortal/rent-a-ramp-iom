@@ -78,6 +78,7 @@ export default function Footer() {
             <Link href="/safety" className="hover:text-orange">
               Safety Guidance
             </Link>
+            <Link href="/privacy" className="hover:text-orange">Privacy</Link>
             <Link href="/terms" className="hover:text-orange">
               Terms &amp; Conditions
             </Link>

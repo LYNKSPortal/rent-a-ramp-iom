@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -10,10 +7,11 @@ export default function Hero() {
     <section className="relative overflow-hidden bg-ink text-white">
       <div className="absolute inset-0">
         <Image
-          src="/hero-cover-img.jpg"
+          src="/images/hero-cover-img.fa5e884b9c.webp"
           alt="Rent a Ramp workshop bay in Douglas, Isle of Man, with 2-post and 4-post lifts"
           fill
-          priority
+          loading="eager"
+          fetchPriority="high"
           sizes="100vw"
           className="object-cover"
         />
@@ -21,14 +19,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/50" />
 
       <Container className="relative py-24 sm:py-32 lg:py-40">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="max-w-2xl"
-        >
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[#e10205]">
-            Douglas, Isle of Man
+        <div className="max-w-2xl">
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[#ff5a5c]">
+            Car ramp hire &amp; DIY garage · Isle of Man
           </p>
           <h1 className="font-display text-5xl font-semibold uppercase leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
             Need a ramp?
@@ -48,7 +41,7 @@ export default function Hero() {
               View Prices
             </Button>
           </div>
-        </motion.div>
+        </div>
       </Container>
     </section>
   );

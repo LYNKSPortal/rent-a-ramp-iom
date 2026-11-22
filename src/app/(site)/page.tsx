@@ -13,8 +13,8 @@ import { BOOKING_HOURS, CONTACT, FAQS, RAMP_HIRE_PRICING, SITE } from "@/lib/sit
 import { formatHour } from "@/lib/availability";
 
 export const metadata: Metadata = {
-  title: { absolute: "Ramp Hire Douglas, Isle of Man | Rent a Ramp" },
-  description: "Hire a 2-post or 4-post vehicle lift in Douglas, Isle of Man. £25 first hour, £20 each additional hour, including VAT. Request a workshop bay by email.",
+  title: { absolute: "Car Ramp & Vehicle Lift Hire Isle of Man | Rent a Ramp" },
+  description: `Car ramp hire and DIY garage in Douglas, Isle of Man. 2-post and 4-post vehicle lifts from £${RAMP_HIRE_PRICING.firstHour}, including VAT. Request a workshop bay online.`,
   alternates: { canonical: "/" },
 };
 
@@ -28,7 +28,7 @@ const structuredData = {
       name: SITE.name,
       url: SITE.url,
       description: SITE.description,
-      image: `${SITE.url}/hero-cover-img.jpg`,
+      image: `${SITE.url}/images/hero-cover-img.fa5e884b9c.webp`,
       logo: `${SITE.url}/logo-dark.png`,
       email: CONTACT.email,
       address: {
@@ -73,7 +73,7 @@ const structuredData = {
         "@type": "Offer",
         price: RAMP_HIRE_PRICING.firstHour,
         priceCurrency: "GBP",
-        description: "First hour of ramp hire, including VAT. Additional hours £20. Bookings require confirmation.",
+        description: `First hour of ramp hire, including VAT. Additional hours £${RAMP_HIRE_PRICING.additionalHour}. Bookings require confirmation.`,
         url: `${SITE.url}/booking`,
       },
     },

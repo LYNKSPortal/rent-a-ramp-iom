@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { BOOKING_DURATIONS, BOOKING_HOURS, CONTACT, RAMPS, SITE } from "@/lib/site-config";
+import { BOOKING_DURATIONS, BOOKING_HOURS, BOOKING_POLICY_VERSION, CONTACT, RAMPS, SITE } from "@/lib/site-config";
 import { computePrice } from "@/lib/booking";
 import { formatHour } from "@/lib/availability";
 import { formatGBP } from "@/lib/utils";
@@ -36,15 +36,17 @@ export async function POST(request: Request) {
   }
   if (!body || typeof body !== "object" || Array.isArray(body)) return fail("Invalid request.");
   if (body.website) return fail("Unable to submit this request.");
-  const { name, email, phone, notes = "", date, hour, rampId, durationId, requestId } = body;
+  const { name, email, phone, notes = "", date, hour, rampId, durationId, requestId, acceptedPolicies, policyVersion } = body;
+  if (acceptedPolicies !== true) return fail("Please read and accept the Terms & Conditions and Safety Guidance.", 400, "POLICY_ACCEPTANCE_REQUIRED");
+  if (policyVersion !== BOOKING_POLICY_VERSION) return fail("Our booking policies have changed. Refresh this page and review the current terms before submitting.", 400, "POLICY_VERSION_CHANGED");
   if (
     typeof name !== "string" || !name.trim() || name.length > 120 || /[\r\n]/.test(name) ||
     typeof email !== "string" || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-    typeof phone !== "string" || !/^[+\d\s().-]{6,30}$/.test(phone) ||
+    typeof phone !== "string" || !/^[+\d\s().-]{6,30}$/.test(phone) || phone.replace(/\D/g, "").length < 6 ||
     typeof notes !== "string" || notes.length > 2000 ||
     typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
     typeof hour !== "number" || !Number.isFinite(hour) ||
-    typeof requestId !== "string" || !/^[0-9a-f-]{36}$/i.test(requestId)
+    typeof requestId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)
   ) return fail("Please check your contact details and booking selection.");
   const ramp = RAMPS.find((item) => item.id === rampId);
   const duration = BOOKING_DURATIONS.find((item) => item.id === durationId);
@@ -75,6 +77,8 @@ export async function POST(request: Request) {
     `Email: ${email}`,
     `Phone: ${phone}`,
     `Notes: ${notes.trim() || "None"}`,
+    `Terms & Conditions and Safety Guidance accepted: yes (version ${BOOKING_POLICY_VERSION})`,
+    "Ramp hire only. Optional extras must be agreed separately.",
   ].join("\n");
   const emailDetails = {
     name: name.trim(), email, phone, notes: notes.trim(), ramp: ramp.name,

@@ -1,4 +1,4 @@
-import { CONTACT, SITE } from "@/lib/site-config";
+import { BOOKING_POLICY_VERSION, CONTACT, SITE } from "@/lib/site-config";
 
 interface BookingEmailDetails {
   name: string;
@@ -54,6 +54,7 @@ export function renderBookingEmail(details: BookingEmailDetails, audience: "cust
 <p style="margin:0;color:#6b6b6b;font-size:14px;line-height:23px;">${notice}</p></td></tr></table>
 <h2 style="margin:30px 0 12px;font-size:18px;line-height:24px;text-transform:uppercase;">Requested booking details</h2>
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="border-collapse:collapse;table-layout:fixed;">${rows}</table>
+<p style="margin:16px 0;font-size:13px;line-height:22px;color:#6b6b6b;">Ramp hire only; optional extras are charged separately. Terms &amp; Conditions and Safety Guidance accepted (version ${BOOKING_POLICY_VERSION}).</p>
 <p style="margin:20px 0 6px;font-size:14px;font-weight:700;">Notes</p>
 <p style="margin:0 0 26px;font-size:14px;line-height:23px;color:#6b6b6b;overflow-wrap:anywhere;">${escapeHtml(details.notes || "None").replace(/\r?\n/g, "<br>")}</p>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td bgcolor="#e10205" style="mso-padding-alt:14px 22px;"><a href="${escapeHtml(actionUrl)}" style="display:inline-block;padding:14px 22px;color:#ffffff;font-size:12px;font-weight:700;text-decoration:none;text-transform:uppercase;">${actionText}</a></td></tr></table>

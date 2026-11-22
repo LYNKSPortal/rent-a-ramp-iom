@@ -1,18 +1,11 @@
-"use client";
-
-import { motion } from "framer-motion";
 import RampImage from "@/components/sections/RampImage";
 import Button from "@/components/ui/Button";
 import { Ramp } from "@/lib/site-config";
 import { formatGBP } from "@/lib/utils";
 
-export default function RampCard({ ramp, index }: { ramp: Ramp; index: number }) {
+export default function RampCard({ ramp }: { ramp: Ramp; index: number }) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
+    <article
       className="flex flex-col border border-grey-200 bg-white"
     >
       <RampImage ramp={ramp} className="aspect-square w-full border-b border-grey-200" />
@@ -66,6 +59,6 @@ export default function RampCard({ ramp, index }: { ramp: Ramp; index: number })
           Book {ramp.name}
         </Button>
       </div>
-    </motion.article>
+    </article>
   );
 }

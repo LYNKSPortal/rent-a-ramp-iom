@@ -18,7 +18,7 @@ export default function Pricing() {
         <SectionHeading
           eyebrow="Pricing"
           title="Simple, transparent rates"
-          description={`One rate applies across every ramp. Prices below are editable placeholders — update site-config to change them anywhere on the site. ${PRICES_INCLUDE_VAT_NOTE}`}
+          description={`The same rates apply to all three ramps. Your booking total covers ramp hire; optional extras are listed separately. ${PRICES_INCLUDE_VAT_NOTE}`}
           light
         />
 
@@ -31,25 +31,25 @@ export default function Pricing() {
               <tbody>
                 <tr className="border-b border-white/10">
                   <td className="py-4 pr-4 text-sm text-white/80">Ramp hire — first hour</td>
-                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange-light">
                     {formatGBP(RAMP_HIRE_PRICING.firstHour)}
                   </td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="py-4 pr-4 text-sm text-white/80">Ramp hire — each additional hour</td>
-                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange-light">
                     {formatGBP(RAMP_HIRE_PRICING.additionalHour)}/hr
                   </td>
                 </tr>
                 <tr className="border-b border-white/10">
-                  <td className="py-4 pr-4 text-sm text-white/80">Half day (4 hrs, placeholder)</td>
-                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="py-4 pr-4 text-sm text-white/80">Half day (4 hrs)</td>
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange-light">
                     {formatGBP(RAMP_HIRE_PRICING.halfDay)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="py-4 pr-4 text-sm text-white/80">Full day (8 hrs, placeholder)</td>
-                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="py-4 pr-4 text-sm text-white/80">Full day (8 hrs)</td>
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange-light">
                     {formatGBP(RAMP_HIRE_PRICING.fullDay)}
                   </td>
                 </tr>
@@ -76,7 +76,7 @@ export default function Pricing() {
                 {ADD_ON_SERVICES.map((addOn) => (
                   <tr key={addOn.name} className="border-b border-white/10 last:border-b-0">
                     <td className="py-4 pr-4 text-sm text-white/80">{addOn.name}</td>
-                    <td className="w-24 whitespace-nowrap py-4 text-right font-display text-lg font-semibold text-orange">
+                    <td className="w-24 whitespace-nowrap py-4 text-right font-display text-lg font-semibold text-orange-light">
                       {formatGBP(addOn.price)}
                       {addOn.unit ? ` ${addOn.unit}` : ""}
                     </td>

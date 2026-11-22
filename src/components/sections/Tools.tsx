@@ -29,7 +29,7 @@ export default function Tools() {
 
         <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-square">
           <Image
-            src="/hero-cover-img.jpg"
+            src="/images/hero-cover-img.fa5e884b9c.webp"
             alt="Vehicle lifts inside the Rent a Ramp self-service workshop in Douglas"
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"

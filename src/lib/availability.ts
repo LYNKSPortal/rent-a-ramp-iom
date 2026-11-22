@@ -38,7 +38,7 @@ export function isDateOpenable(dateStr: string): boolean {
   if (!dateStr) return false;
   const date = new Date(`${dateStr}T00:00:00`);
   const day = date.getDay();
-  return BOOKING_HOURS.dayHours[day] !== null;
+  return Boolean(BOOKING_HOURS.dayHours[day]);
 }
 
 /** Returns today's date as YYYY-MM-DD, used to constrain the date input. */

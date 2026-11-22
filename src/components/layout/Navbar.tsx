@@ -24,8 +24,16 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
+    function escape(event: KeyboardEvent) {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+        document.querySelector<HTMLButtonElement>('button[aria-controls="mobile-menu"]')?.focus();
+      }
+    }
+    document.addEventListener("keydown", escape);
     return () => {
       document.body.style.overflow = "";
+      document.removeEventListener("keydown", escape);
     };
   }, [menuOpen]);
 
@@ -37,8 +45,8 @@ export default function Navbar() {
       )}
     >
       <div className="border-b border-grey-200 bg-white">
-        <Container className="flex h-16 items-center justify-between lg:h-20">
-          <Link href="/" className="shrink-0" onClick={() => setMenuOpen(false)}>
+        <Container className="flex h-16 items-center justify-between gap-4 lg:h-20">
+          <Link href="/" className="min-w-0 max-w-[300px] flex-1" onClick={() => setMenuOpen(false)}>
             <Logo />
             <span className="sr-only">Rent a Ramp — Home</span>
           </Link>
@@ -62,7 +70,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center text-ink lg:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center text-ink lg:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
@@ -105,6 +113,9 @@ export default function Navbar() {
         </Container>
       </div>
 
+      <div className="border-t border-white/20 bg-ink px-5 py-2 lg:hidden">
+        <Button href="/booking" className="min-h-11 w-full" onClick={() => setMenuOpen(false)}><CalendarDays className="h-5 w-5 shrink-0" aria-hidden="true" />Book a Ramp</Button>
+      </div>
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </header>
   );

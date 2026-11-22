@@ -5,6 +5,7 @@ import { CONTACT } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Thank You for Your Booking Request",
+  description: "Your ramp hire request has been received. Our team will reply within 24 hours; please wait for confirmation before attending the workshop.",
   robots: { index: false, follow: true },
 };
 

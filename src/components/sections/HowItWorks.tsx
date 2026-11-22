@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Container from "@/components/ui/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { HOW_IT_WORKS } from "@/lib/site-config";
@@ -17,15 +14,11 @@ export default function HowItWorks() {
 
         <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-8">
           {HOW_IT_WORKS.map((item, i) => (
-            <motion.div
+            <div
               key={item.step}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
               className="relative"
             >
-              <span className="font-display text-6xl font-semibold text-grey-200">
+              <span className="font-display text-6xl font-semibold text-grey-600">
                 {item.step}
               </span>
               <h3 className="font-display mt-3 text-xl font-semibold uppercase tracking-tight text-ink">
@@ -40,7 +33,7 @@ export default function HowItWorks() {
                   className="absolute right-[-1.5rem] top-6 hidden h-px w-8 bg-grey-200 sm:block"
                 />
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
       </Container>

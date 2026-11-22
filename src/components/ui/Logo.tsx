@@ -16,7 +16,7 @@ export default function Logo({
   return (
     <span
       className={cn(
-        "inline-flex items-center",
+        "inline-flex min-w-0 max-w-full items-center",
         light && "bg-transparent",
         className
       )}
@@ -24,9 +24,10 @@ export default function Logo({
       <Image
         src="/logo-dark.png"
         alt="Rent a Ramp"
-        width={3000}
-        height={435}
-        priority
+        width={600}
+        height={87}
+        sizes="(max-width: 400px) 65vw, 300px"
+        priority={!light}
         className="h-auto w-[300px] max-w-full"
       />
     </span>

@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { BOOKING_DURATIONS, RAMPS } from "@/lib/site-config";
 import { DurationId, durationHours } from "@/lib/booking";
 import RampSelector from "@/components/booking/RampSelector";
@@ -10,12 +8,6 @@ import DurationSelector from "@/components/booking/DurationSelector";
 import DateTimeSelector from "@/components/booking/DateTimeSelector";
 import PriceSummary from "@/components/booking/PriceSummary";
 import BookingContactForm from "@/components/booking/BookingContactForm";
-
-const fadeIn = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: "easeOut" as const },
-};
 
 function StepLabel({ number, title }: { number: number; title: string }) {
   return (
@@ -30,9 +22,7 @@ function StepLabel({ number, title }: { number: number; title: string }) {
   );
 }
 
-export default function BookingFlow() {
-  const searchParams = useSearchParams();
-  const preselectedRamp = searchParams.get("ramp");
+export default function BookingFlow({ preselectedRamp }: { preselectedRamp?: string }) {
 
   const [rampId, setRampId] = useState<string | null>(() =>
     preselectedRamp && RAMPS.some((r) => r.id === preselectedRamp) ? preselectedRamp : null
@@ -61,26 +51,26 @@ export default function BookingFlow() {
   }
 
   return (
-    <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-14">
+    <div className="mt-12 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-14">
       <div className="space-y-10">
-        <motion.section {...fadeIn}>
+        <section>
           <StepLabel number={1} title="Choose your ramp" />
           <div className="mt-4">
             <RampSelector selectedId={rampId} onSelect={handleRampSelect} />
           </div>
-        </motion.section>
+        </section>
 
         {ramp && (
-          <motion.section {...fadeIn}>
+          <section>
             <StepLabel number={2} title="Choose your duration" />
             <div className="mt-4">
               <DurationSelector ramp={ramp} selectedId={durationId} onSelect={handleDurationSelect} />
             </div>
-          </motion.section>
+          </section>
         )}
 
         {ramp && duration && (
-          <motion.section {...fadeIn}>
+          <section>
             <StepLabel number={3} title="Choose your date & time" />
             <div className="mt-4">
               <DateTimeSelector
@@ -92,11 +82,11 @@ export default function BookingFlow() {
                 onHourChange={setHour}
               />
             </div>
-          </motion.section>
+          </section>
         )}
 
         {ramp && duration && date && hour !== null && (
-          <motion.section {...fadeIn}>
+          <section>
             <StepLabel number={4} title="Confirm your details" />
             <div className="mt-4">
               <BookingContactForm
@@ -107,7 +97,7 @@ export default function BookingFlow() {
                 durationLabel={duration.label}
               />
             </div>
-          </motion.section>
+          </section>
         )}
       </div>
 

@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
-import { CONTACT, Ramp } from "@/lib/site-config";
+import { BOOKING_POLICY_VERSION, CONTACT, Ramp } from "@/lib/site-config";
 import { DurationId } from "@/lib/booking";
 
 interface Props {
@@ -27,6 +27,7 @@ export default function BookingContactForm({
   const [notes, setNotes] = useState("");
 
   const [website, setWebsite] = useState("");
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const requestId = useRef("");
@@ -40,7 +41,7 @@ export default function BookingContactForm({
     setSending(true);
     setError("");
     try {
-      const details = { rampId: ramp.id, date, hour, durationId, name: name.trim(), email: email.trim(), phone: phone.trim(), notes: notes.trim(), website };
+      const details = { rampId: ramp.id, date, hour, durationId, name: name.trim(), email: email.trim(), phone: phone.trim(), notes: notes.trim(), website, acceptedPolicies, policyVersion: BOOKING_POLICY_VERSION };
       const fingerprint = JSON.stringify(details);
       if (requestId.current !== fingerprint) {
         requestId.current = fingerprint;
@@ -50,6 +51,7 @@ export default function BookingContactForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...details, requestId: submissionId.current }),
+        signal: AbortSignal.timeout(20000),
       });
       const result = await response.json().catch(() => null);
       if (!response.ok || !result?.success) {
@@ -57,10 +59,12 @@ export default function BookingContactForm({
           ? `${result.error}${result.code ? ` (Reference: ${result.code})` : ""}`
           : "The booking service could not be reached. Please try again shortly.");
       }
+      window.dispatchEvent(new Event("booking-request-submitted"));
       router.replace("/booking/thank-you");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Unable to send your request. Please try again.");
-    } finally {
+      setError(error instanceof Error && error.name === "TimeoutError"
+        ? "The request timed out. Please retry with the same details, or contact us by email or WhatsApp."
+        : error instanceof Error ? error.message : "Unable to send your request. Please try again.");
       pending.current = false;
       setSending(false);
     }
@@ -78,6 +82,8 @@ export default function BookingContactForm({
           </label>
           <input
             id="name"
+            autoComplete="name"
+            maxLength={120}
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -91,6 +97,9 @@ export default function BookingContactForm({
           <input
             id="phone"
             type="tel"
+            autoComplete="tel"
+            minLength={6}
+            maxLength={30}
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -105,6 +114,8 @@ export default function BookingContactForm({
         <input
           id="email"
           type="email"
+          autoComplete="email"
+          maxLength={254}
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -118,11 +129,18 @@ export default function BookingContactForm({
         <textarea
           id="notes"
           rows={3}
+          maxLength={2000}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="e.g. the job you're doing, or your vehicle"
           className="w-full border-2 border-grey-200 px-4 py-2.5 text-sm focus:border-orange focus:outline-none"
         />
+      </div>
+      <div className="flex items-start gap-3">
+        <input id="accepted-policies" type="checkbox" required checked={acceptedPolicies} onChange={(e) => setAcceptedPolicies(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-[#c90003]" />
+        <label htmlFor="accepted-policies" className="text-sm leading-relaxed text-ink">
+          I have read and accept the <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-orange underline">Terms &amp; Conditions</a> and <a href="/safety" target="_blank" rel="noopener noreferrer" className="text-orange underline">Safety Guidance</a> (opens in new tabs). I understand this is a booking request, not a confirmed reservation.
+        </label>
       </div>
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -134,7 +152,7 @@ export default function BookingContactForm({
       </Button>
       <p className="text-xs text-grey-600">
         Your details will be emailed to our team to handle your booking request.
-        We&rsquo;ll confirm availability with you directly. No payment is taken.
+        We&rsquo;ll confirm availability with you directly. No payment is taken. Read our <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy Notice</a>.
       </p>
     </form>
   );

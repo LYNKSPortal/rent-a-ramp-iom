@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
 import BookingFlow from "@/components/booking/BookingFlow";
@@ -10,13 +9,15 @@ export const metadata: Metadata = {
     title: "Request Ramp Hire in Douglas | Rent a Ramp",
     description: "Choose a vehicle lift, date and duration, then submit your booking request directly to our team. All bookings require confirmation.",
     url: "/booking",
-    images: ["/hero-cover-img.jpg"],
+    images: ["/images/hero-cover-img.fa5e884b9c.webp"],
   },
   description:
     "Choose your ramp, date and time slot, and book your self-service workshop bay in Douglas, Isle of Man.",
 };
 
-export default function BookingPage() {
+export default async function BookingPage({ searchParams }: PageProps<"/booking">) {
+  const params = await searchParams;
+  const preselectedRamp = typeof params.ramp === "string" ? params.ramp : undefined;
   return (
     <section className="bg-grey-50 py-14 lg:py-20">
       <Container>
@@ -33,9 +34,7 @@ export default function BookingPage() {
           </p>
         </div>
 
-        <Suspense>
-          <BookingFlow />
-        </Suspense>
+        <BookingFlow preselectedRamp={preselectedRamp} />
       </Container>
     </section>
   );

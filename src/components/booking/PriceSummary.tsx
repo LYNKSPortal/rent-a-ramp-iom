@@ -19,7 +19,7 @@ export default function PriceSummary({
   const price = ramp && durationId ? computePrice(ramp, durationId) : null;
 
   return (
-    <div className="sticky top-24 border-2 border-ink bg-white p-6">
+    <div className="min-w-0 border-2 border-ink bg-white p-5 sm:p-6 lg:sticky lg:top-36">
       <h2 className="font-display text-xl font-semibold uppercase tracking-tight text-ink">
         Your Booking
       </h2>
@@ -60,7 +60,7 @@ export default function PriceSummary({
         </span>
       </div>
       <p className="mt-2 text-xs text-grey-600">
-        {PRICES_INCLUDE_VAT_NOTE} Price shown is a placeholder from site config. Final confirmation is by phone/email.
+        {PRICES_INCLUDE_VAT_NOTE} Ramp hire only; optional extras are charged separately. This is a request, not a confirmed booking. Our team will reply within 24 hours.
       </p>
     </div>
   );

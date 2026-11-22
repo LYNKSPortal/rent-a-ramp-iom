@@ -6,12 +6,14 @@ import { SITE } from "@/lib/site-config";
 const oswald = Oswald({
   variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "600",
+  display: "swap",
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -22,6 +24,7 @@ export const metadata: Metadata = {
   },
   description: SITE.description,
   robots: { index: true, follow: true },
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
   applicationName: SITE.name,
   keywords: [
     "ramp hire Isle of Man",
@@ -37,13 +40,13 @@ export const metadata: Metadata = {
     description: SITE.description,
     url: SITE.url,
     siteName: SITE.name,
-    images: [{ url: "/hero-cover-img.jpg", alt: "Rent a Ramp self-service workshop in Douglas, Isle of Man" }],
+    images: [{ url: "/images/hero-cover-img.fa5e884b9c.webp", alt: "Rent a Ramp self-service workshop in Douglas, Isle of Man" }],
     locale: "en_GB",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/hero-cover-img.jpg"],
+    images: ["/images/hero-cover-img.fa5e884b9c.webp"],
     title: `${SITE.name} | Need a ramp? Rent one.`,
     description: SITE.description,
   },

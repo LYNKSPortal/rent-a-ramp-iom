@@ -34,7 +34,7 @@ function loadRoute(send, env) {
 const input = {
   rampId: "2post-a", durationId: "1h", date: "2099-01-05", hour: 9,
   name: "Test Customer", email: "customer@example.test", phone: "+447624332271",
-  notes: "TEST ONLY", requestId: "12345678-1234-1234-1234-123456789abc",
+  notes: "TEST ONLY", acceptedPolicies: true, policyVersion: "2026-11-22", requestId: "12345678-1234-1234-1234-123456789abc",
 };
 const request = (body, origin = "https://www.rentaramp.im") => new Request("https://www.rentaramp.im/api/bookings", {
   method: "POST", headers: { "Content-Type": "application/json", origin }, body: JSON.stringify(body),
@@ -71,6 +71,26 @@ test("API accepts opening and closing boundaries and repeat requests without che
   ]) assert.equal((await post(request({ ...input, ...selection }))).status, 200);
 });
 
+test("rejects missing, false and non-boolean policy acceptance before sending email", async () => {
+  const post = loadRoute(() => assert.fail("Must not send without policy acceptance"));
+  for (const acceptedPolicies of [undefined, false, "true", 1]) {
+    const response = await post(request({ ...input, acceptedPolicies }));
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).code, "POLICY_ACCEPTANCE_REQUIRED");
+  }
+});
+
+test("rejects outdated policy versions and invalid required fields without sending", async () => {
+  const post = loadRoute(() => assert.fail("Must not send invalid data"));
+  for (const change of [{ name: " " }, { email: "" }, { phone: "------" }, { phone: "" }, { notes: "x".repeat(2001) }, { requestId: "-".repeat(36) }, { date: "2099-02-30" }]) {
+    const validate = loadRoute(() => assert.fail("Must not send invalid data"));
+    assert.equal((await validate(request({ ...input, ...change }))).status, 400);
+  }
+  const response = await post(request({ ...input, policyVersion: "old" }));
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).code, "POLICY_VERSION_CHANGED");
+});
+
 test("sends separate owner and customer emails with correct sender, reply-to and server-calculated pricing", async () => {
   let payload;
   const post = loadRoute(async (url, options) => {
@@ -97,6 +117,8 @@ test("sends separate owner and customer emails with correct sender, reply-to and
     assert.match(message.html, /#e10205/);
     assert.match(message.html, /£25/);
     assert.ok(message.text);
+    assert.match(message.text, /Terms & Conditions and Safety Guidance accepted: yes/);
+    assert.match(message.html, /Terms &amp; Conditions and Safety Guidance accepted/);
   }
   assert.match(payload[1].html, /Your booking is not yet confirmed/);
   assert.match(payload[1].html, /24 hours/);

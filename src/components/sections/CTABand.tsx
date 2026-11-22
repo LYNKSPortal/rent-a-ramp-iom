@@ -3,7 +3,7 @@ import Button from "@/components/ui/Button";
 
 export default function CTABand({
   title = "Ready to get to work?",
-  description = "Pick your ramp and a time that suits you — most bookings confirm within the hour.",
+  description = "Request a ramp and time that suit you. Our team will reply within 24 hours to confirm availability.",
 }: {
   title?: string;
   description?: string;
@@ -15,7 +15,7 @@ export default function CTABand({
           <h2 className="font-display text-2xl font-semibold uppercase tracking-tight text-white sm:text-3xl">
             {title}
           </h2>
-          <p className="mt-2 max-w-md text-sm font-medium text-white/90 sm:text-base">
+          <p className="mt-2 max-w-md text-sm font-medium text-white sm:text-base">
             {description}
           </p>
         </div>

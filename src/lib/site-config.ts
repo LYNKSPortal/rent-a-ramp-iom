@@ -48,7 +48,9 @@ export const ADD_ON_SERVICES: AddOnService[] = [
 ];
 
 export const PRICING_NOTE =
-  "Customers must leave the work area clean after use. Full-day and weekly ramp hire may be available at a discounted rate by prior agreement.";
+  "Ramp hire includes your selected bay and access to shared general workshop tools. Cleaning, disposal, engine crane hire and specialist kit are charged separately as listed. Extras are agreed with you before use and are not included in the online total.";
+
+export const BOOKING_POLICY_VERSION = "2026-11-22";
 
 export interface Ramp {
   id: string;
@@ -83,7 +85,7 @@ export const SITE = {
   shortName: "Rent a Ramp",
   url: "https://www.rentaramp.im",
   description:
-    "Rent a Ramp is Douglas, Isle of Man's self-service vehicle workshop. Book a professional 2-post or 4-post lift by the hour and work on your own car or van with workshop tools on hand.",
+    "Car ramp hire and vehicle lift hire in Douglas, Isle of Man. Use our DIY garage with 2-post and 4-post lifts, shared general tools and clear hourly prices. All bookings require confirmation.",
   tagline: "Need a ramp? Rent one.",
   subTagline: "You do the work. We provide the workshop.",
 };
@@ -153,9 +155,9 @@ export const RAMPS: Ramp[] = [
       "Free-standing floor space around the vehicle",
     ],
     pricing: RAMP_HIRE_PRICING,
-    availabilityNote: "Usually bookable same week",
+    availabilityNote: "Requests checked manually — confirmation required",
     imageAlt: "Two-post vehicle lift ramp in a workshop bay",
-    image: "/2-post-ramp-a.jpg",
+    image: "/images/2-post-ramp-a.8a4f39850b.webp",
   },
   {
     id: "2post-b",
@@ -174,9 +176,9 @@ export const RAMPS: Ramp[] = [
       "Positioned next to the tool wall",
     ],
     pricing: RAMP_HIRE_PRICING,
-    availabilityNote: "Good availability most weekdays",
+    availabilityNote: "Requests checked manually — confirmation required",
     imageAlt: "Second two-post vehicle lift ramp in the workshop",
-    image: "/2-post-ramp-b.jpg",
+    image: "/images/2-post-ramp-b.847efe46d8.webp",
   },
   {
     id: "4post-a",
@@ -195,9 +197,9 @@ export const RAMPS: Ramp[] = [
       "Extra floor space for tools & parts",
     ],
     pricing: RAMP_HIRE_PRICING,
-    availabilityNote: "Book ahead — our most popular bay",
+    availabilityNote: "Requests checked manually — confirmation required",
     imageAlt: "Four-post drive-on vehicle lift ramp in the workshop",
-    image: "/4-post-ramp-c.jpg",
+    image: "/images/4-post-ramp-c.8de2ad3bd7.webp",
   },
 ];
 
@@ -206,16 +208,16 @@ export const LONGER_BOOKING_NOTE =
 
 export const TOOLS_EQUIPMENT = {
   intro:
-    "Every bay includes access to our shared workshop tools and equipment, so you don't need to bring a full toolkit — just your parts and know-how.",
+    "Ramp hire includes access to shared general tools, jacks, stands and air lines. Bring your parts and consumables. Engine crane hire, specialist kit, cleaning and waste disposal cost extra; see the pricing table and agree extras with Tomasz before use.",
   items: [
     "Trolley jacks & axle stands",
     "Impact wrenches & torque wrenches",
     "Sockets, spanners & general hand tools",
-    "Oil drain trolleys & fluid recycling",
+    "Oil drain trolleys (disposal charged separately)",
     "Brake & clutch bleeding kits",
     "Compressed air line at every bay",
     "Work lights & extension leads",
-    "Waste disposal for oil, coolant & tyres",
+    "Oil, fluid & parts disposal available at extra cost",
   ],
 };
 
@@ -234,9 +236,9 @@ export const HOW_IT_WORKS = [
   },
   {
     step: "03",
-    title: "Turn Up & Get to Work",
+    title: "Get Confirmation & Arrive",
     description:
-      "Arrive, get your bay, and use our workshop tools and equipment to get the job done.",
+      "Send your request. Our team will reply within 24 hours to confirm availability. Only come to the workshop once your booking is confirmed.",
   },
 ];
 
@@ -259,7 +261,7 @@ export const WHY_RENT_A_RAMP = [
   {
     title: "Everything on hand",
     description:
-      "Tools, jacks, air lines and waste disposal are all included in your booking.",
+      "Shared general tools, jacks and air lines are included. Waste disposal, cleaning, engine crane hire and specialist kit are priced separately.",
   },
 ];
 
@@ -283,7 +285,7 @@ export const FAQS: FAQItem[] = [
   {
     question: "Do I need my own tools?",
     answer:
-      "No — every bay gives you access to our shared workshop tools and equipment. You're welcome to bring your own kit too if you prefer.",
+      "Shared general tools, jacks, stands and air lines are included in ramp hire. You can bring your own tools, parts and consumables. Specialist kit and engine crane hire cost extra, as do cleaning and waste disposal; please agree these before use.",
   },
   {
     question: "Do I need experience to use the ramps?",
@@ -313,4 +315,4 @@ export const FAQS: FAQItem[] = [
 ];
 
 export const SAFETY_NOTE =
-  "Rent a Ramp is a self-service facility. Vehicles are lifted and worked on at the customer's own risk. Please follow all posted safety guidance and lift operating instructions, and ask our team if you're ever unsure.";
+  "Rent a Ramp is a self-service facility. Follow the on-site induction, lift manufacturer instructions and staff directions. Stop work and ask for help if you are unsure. Your booking must be confirmed before you attend.";
