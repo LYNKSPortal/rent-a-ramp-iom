@@ -23,33 +23,33 @@ export default function Pricing() {
         />
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-          <div className="overflow-x-auto">
+          <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/50">
               Ramp Hire
             </p>
-            <table className="w-full min-w-[420px] border-collapse text-left">
+            <table className="w-full table-fixed border-collapse text-left">
               <tbody>
                 <tr className="border-b border-white/10">
                   <td className="py-4 pr-4 text-sm text-white/80">Ramp hire — first hour</td>
-                  <td className="py-4 pr-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
                     {formatGBP(RAMP_HIRE_PRICING.firstHour)}
                   </td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="py-4 pr-4 text-sm text-white/80">Ramp hire — each additional hour</td>
-                  <td className="py-4 pr-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
                     {formatGBP(RAMP_HIRE_PRICING.additionalHour)}/hr
                   </td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="py-4 pr-4 text-sm text-white/80">Half day (4 hrs, placeholder)</td>
-                  <td className="py-4 pr-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
                     {formatGBP(RAMP_HIRE_PRICING.halfDay)}
                   </td>
                 </tr>
                 <tr>
                   <td className="py-4 pr-4 text-sm text-white/80">Full day (8 hrs, placeholder)</td>
-                  <td className="py-4 pr-4 text-right font-display text-xl font-semibold text-orange">
+                  <td className="w-24 whitespace-nowrap py-4 text-right font-display text-xl font-semibold text-orange">
                     {formatGBP(RAMP_HIRE_PRICING.fullDay)}
                   </td>
                 </tr>
@@ -58,25 +58,25 @@ export default function Pricing() {
 
             <p className="mt-6 text-xs leading-relaxed text-white/50">{PRICING_NOTE}</p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {RAMPS.map((ramp) => (
-                <Button key={ramp.id} href={`/booking?ramp=${ramp.id}`} size="md" variant="outline-light">
+                <Button key={ramp.id} href={`/booking?ramp=${ramp.id}`} size="md" variant="outline-light" className="w-full sm:w-auto">
                   Book {ramp.name}
                 </Button>
               ))}
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/50">
               Add-On Services
             </p>
-            <table className="w-full min-w-[420px] border-collapse text-left">
+            <table className="w-full table-fixed border-collapse text-left">
               <tbody>
                 {ADD_ON_SERVICES.map((addOn) => (
                   <tr key={addOn.name} className="border-b border-white/10 last:border-b-0">
                     <td className="py-4 pr-4 text-sm text-white/80">{addOn.name}</td>
-                    <td className="py-4 pr-4 text-right font-display text-lg font-semibold text-orange">
+                    <td className="w-24 whitespace-nowrap py-4 text-right font-display text-lg font-semibold text-orange">
                       {formatGBP(addOn.price)}
                       {addOn.unit ? ` ${addOn.unit}` : ""}
                     </td>
