@@ -1,0 +1,125 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { BOOKING_DURATIONS, RAMPS } from "@/lib/site-config";
+import { DurationId, durationHours } from "@/lib/booking";
+import RampSelector from "@/components/booking/RampSelector";
+import DurationSelector from "@/components/booking/DurationSelector";
+import DateTimeSelector from "@/components/booking/DateTimeSelector";
+import PriceSummary from "@/components/booking/PriceSummary";
+import BookingContactForm from "@/components/booking/BookingContactForm";
+
+const fadeIn = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, ease: "easeOut" as const },
+};
+
+function StepLabel({ number, title }: { number: number; title: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="font-display flex h-8 w-8 shrink-0 items-center justify-center bg-ink text-sm font-semibold text-white">
+        {number}
+      </span>
+      <h2 className="font-display text-lg font-semibold uppercase tracking-tight text-ink">
+        {title}
+      </h2>
+    </div>
+  );
+}
+
+export default function BookingFlow() {
+  const searchParams = useSearchParams();
+  const preselectedRamp = searchParams.get("ramp");
+
+  const [rampId, setRampId] = useState<string | null>(() =>
+    preselectedRamp && RAMPS.some((r) => r.id === preselectedRamp) ? preselectedRamp : null
+  );
+  const [date, setDate] = useState("");
+  const [hour, setHour] = useState<number | null>(null);
+  const [durationId, setDurationId] = useState<DurationId | null>(null);
+
+  const ramp = useMemo(() => RAMPS.find((r) => r.id === rampId) ?? null, [rampId]);
+  const duration = BOOKING_DURATIONS.find((d) => d.id === durationId) ?? null;
+
+  // Reset downstream selections when an earlier choice changes.
+  function handleRampSelect(id: string) {
+    setRampId(id);
+    setHour(null);
+  }
+
+  function handleDurationSelect(id: DurationId) {
+    setDurationId(id);
+    setHour(null);
+  }
+
+  function handleDateChange(newDate: string) {
+    setDate(newDate);
+    setHour(null);
+  }
+
+  return (
+    <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-14">
+      <div className="space-y-10">
+        <motion.section {...fadeIn}>
+          <StepLabel number={1} title="Choose your ramp" />
+          <div className="mt-4">
+            <RampSelector selectedId={rampId} onSelect={handleRampSelect} />
+          </div>
+        </motion.section>
+
+        {ramp && (
+          <motion.section {...fadeIn}>
+            <StepLabel number={2} title="Choose your duration" />
+            <div className="mt-4">
+              <DurationSelector ramp={ramp} selectedId={durationId} onSelect={handleDurationSelect} />
+            </div>
+          </motion.section>
+        )}
+
+        {ramp && duration && (
+          <motion.section {...fadeIn}>
+            <StepLabel number={3} title="Choose your date & time" />
+            <div className="mt-4">
+              <DateTimeSelector
+                rampId={ramp.id}
+                durationHours={durationHours(duration.id)}
+                date={date}
+                onDateChange={handleDateChange}
+                hour={hour}
+                onHourChange={setHour}
+              />
+            </div>
+          </motion.section>
+        )}
+
+        {ramp && duration && date && hour !== null && (
+          <motion.section {...fadeIn}>
+            <StepLabel number={4} title="Confirm your details" />
+            <div className="mt-4">
+              <BookingContactForm
+                ramp={ramp}
+                date={date}
+                hour={hour}
+                durationId={duration.id}
+                durationLabel={duration.label}
+              />
+            </div>
+          </motion.section>
+        )}
+      </div>
+
+      <div className="lg:order-last">
+        <PriceSummary
+          ramp={ramp}
+          date={date}
+          hour={hour}
+          durationLabel={duration?.label ?? null}
+          durationId={duration?.id ?? null}
+        />
+      </div>
+    </div>
+  );
+}
